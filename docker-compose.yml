@@ -8,12 +8,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-    environment:
-      PG_HOST: ep-restless-rice-a5ilnoib-pooler.us-east-2.aws.neon.tech
-      PG_USERNAME: neondb_owner
-      PG_PASSWORD: npg_BOHhNiRSz8j0
-      PG_DATABASE: neondb
-      PG_PORT: 5432
+    env_file:
+      - .env # Load environment variables from the .env file
     depends_on:
       - adminer
 
