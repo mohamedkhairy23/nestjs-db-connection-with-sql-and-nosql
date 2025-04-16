@@ -13,4 +13,10 @@ export class CreateUserDto {
 
   @IsString()
   readonly password: string;
+
+  @IsString()
+  readonly city: string;
+
+  @IsString()
+  readonly street: string;
 }
