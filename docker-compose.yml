@@ -1,25 +1,48 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:13.1
-    container_name: nestjs-database-connection-postgres-db
-    restart: always
-    environment:
-      POSTGRES_USER: boghdady
-      POSTGRES_PASSWORD: pass123
-      POSTGRES_DB: nestjs-db
-    volumes:
-      - nestjs_postgres_db:/data/postgres
+  nestjs-app:
+    container_name: nestjs-app
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 5432:5432
+      - 3000:3000
+    env_file:
+      - .env # Load environment variables from the .env file
+    depends_on:
+      - mongodb
+      - adminer
+
+  mongodb:
+    image: mongo:7.0.2
+    container_name: nestjs-database-connection-mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data_container:/data/db
 
   adminer:
     image: adminer
     container_name: nestjs-database-connection-adminer
     restart: always
+    environment:
+      ADMINER_DEFAULT_SERVER: ep-restless-rice-a5ilnoib-pooler.us-east-2.aws.neon.tech
     ports:
       - 8080:8080
 
 volumes:
-  nestjs_postgres_db:
+  mongodb_data_container:
+###################################################################################################################################3
+# docker-compose up -d --build ==> To build docker image
+# docker ps -a ==> To display images
+# docker-compose down ==> This command stops and removes all containers, networks, and volumes defined in the compose file
+# docker-compose down --rmi all ==> If you also want to remove named volumes (like your DB data)
+# docker system prune -a ==> Will Remove (All stopped containers - All unused networks - All dangling images (images not used by any container) - All unused images (even if they're not dangling) - All build cache - All unused volumes (only if you add --volumes))
+
+# If you want to rebuild everything from scratch (e.g., changes in dependencies or Dockerfile):
+
+# docker-compose down -v
+# docker-compose build --no-cache
+# docker-compose up -d
