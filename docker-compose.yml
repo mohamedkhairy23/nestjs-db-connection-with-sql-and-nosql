@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 3000:3000
+      - 3001:3000
     env_file:
       - .env # Load environment variables from the .env file
     depends_on:
@@ -34,7 +34,7 @@ services:
 
 volumes:
   mongodb_data_container:
-###################################################################################################################################3
+###################################################################################################################################
 # docker-compose up -d --build ==> To build docker image
 # docker ps -a ==> To display images
 # docker-compose down ==> This command stops and removes all containers, networks, and volumes defined in the compose file
