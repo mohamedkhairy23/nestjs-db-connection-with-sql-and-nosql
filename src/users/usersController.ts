@@ -8,21 +8,45 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserService } from './users.service';
 import { User } from './schema/user.schema';
 import { ParseMongoIdPipe } from 'src/mongo/pipes/parse-mongo-id.pipe';
-import { MongoIdDto } from './dtos/mongo-id.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async find(): Promise<User[]> {
-    return this.userService.findUsers();
+  async find(
+    @Query('page') page = '1',
+    @Query('limit') limit = '10',
+    @Query('sortBy') sortBy = 'createdAt',
+    @Query('sortOrder') sortOrder = 'desc',
+    @Query('username') username?: string,
+    @Query('email') email?: string,
+    @Query('country') country?: string,
+    @Query('search') search?: string, // <-- New
+  ): Promise<{
+    data: User[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const safeSortOrder: 'asc' | 'desc' = sortOrder === 'asc' ? 'asc' : 'desc';
+
+    return this.userService.findUsers({
+      page: parseInt(page),
+      limit: parseInt(limit),
+      sortBy,
+      sortOrder: safeSortOrder,
+      filters: { username, email, country },
+      search,
+    });
   }
 
   @Get(':id')
