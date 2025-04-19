@@ -123,6 +123,18 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<void> {
-    await this.userModel.findByIdAndDelete(id);
+    try {
+      const result = await this.userModel.findByIdAndDelete(id);
+
+      if (!result) {
+        throw new NotFoundException(`User with ID ${id} not found.`);
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Failed to delete user');
+    }
   }
 }
