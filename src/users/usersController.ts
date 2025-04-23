@@ -15,12 +15,16 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserService } from './users.service';
 import { User } from './schema/user.schema';
 import { ParseMongoIdPipe } from 'src/mongo/pipes/parse-mongo-id.pipe';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Find or search users' })
+  @ApiResponse({ status: 200, description: 'User Results' })
   async find(
     @Query('page') page = '1',
     @Query('limit') limit = '10',
@@ -50,6 +54,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Find a user by ID' })
+  @ApiResponse({ status: 200, description: 'User Exist' })
   async findOne(
     @Param('id', ParseMongoIdPipe)
     id: string,
@@ -58,6 +64,8 @@ export class UsersController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
   async create(
     @Body()
     createUserDto: CreateUserDto,
@@ -66,6 +74,8 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update a user by ID' })
+  @ApiResponse({ status: 200, description: 'User updated successfully' })
   async update(
     @Param('id', ParseMongoIdPipe) id: string,
     @Body()
@@ -75,6 +85,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a user by ID' })
+  @ApiResponse({ status: 204, description: 'User deleted successfully' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseMongoIdPipe) id: string): Promise<void> {
     await this.userService.deleteUser(id);
